@@ -1,2 +1,31 @@
-.carformContainer {
+.carForm {
+	display: flex;
+	gap: 20px;
+	align-items: center;
+	flex-wrap: wrap;
+
+	.nameInput {
+		height: 40px;
+		padding: 10px;
+		max-width: 200px;
+		width: 100%;
+		border: 1px solid transparent;
+		border-radius: 8px;
+
+		&:hover {
+			border-color: #646cff;
+		}
+	}
+
+	.colorInput {
+		height: 40px;
+		border-radius: 8px;
+		border: 1px solid transparent;
+		cursor: pointer;
+		color: #4e4e4e;
+
+		&:hover {
+			border-color: #646cff;
+		}
+	}
 }

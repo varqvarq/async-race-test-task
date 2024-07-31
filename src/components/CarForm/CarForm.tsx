@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import { ICar } from '../../types';
+
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
 	createCar,
@@ -25,7 +27,7 @@ const CarForm: React.FC<CarFormProps> = ({
 	raceInProgress,
 }) => {
 	const carToEdit = useAppSelector(selectGarageData).cars.find(
-		(car) => car.id === carId
+		(car: ICar) => car.id === carId
 	);
 	const dispatch = useAppDispatch();
 

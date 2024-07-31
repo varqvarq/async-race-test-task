@@ -1,0 +1,130 @@
+.mainWrapper {
+	padding: 0 20px;
+
+	.winner {
+		width: 300px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		background-color: rgba(148, 117, 242, 0.824);
+		border-radius: 20px;
+		z-index: 999;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 24px;
+		flex-direction: column;
+		transform: translate(-50%, -90%);
+		text-align: center;
+
+		.winnerCloseButton {
+			position: absolute;
+			background: none;
+			top: 5px;
+			right: 15px;
+			padding: 0;
+			border: none;
+
+			&:hover {
+				color: red;
+				background-color: none;
+				outline: none;
+				border: none;
+			}
+
+			&:focus,
+			&:focus-visible {
+				outline: none;
+			}
+
+			&:active {
+				border: none;
+			}
+		}
+	}
+
+	.button {
+		max-width: 50px;
+		width: 100%;
+		text-transform: uppercase;
+		padding: 1px 0;
+		font-size: 0.6rem;
+		border-radius: 4px;
+	}
+
+	.raceControl {
+		margin: 20px 0;
+		display: flex;
+		gap: 5px;
+		flex-wrap: wrap;
+	}
+
+	.garageContainer {
+		padding: 0;
+		height: 100%;
+		position: relative;
+
+		.carContainer {
+			width: 100%;
+			display: flex;
+			margin-bottom: 10px;
+			align-items: center;
+
+			.carControl {
+				display: flex;
+				gap: 5px;
+				flex-wrap: wrap;
+				max-width: 120px;
+			}
+
+			.raceTrackContainer {
+				width: 100%;
+				display: flex;
+
+				.raceTrack {
+					min-height: 50px;
+					border: 1px solid black;
+					border-radius: 4px;
+					width: 100%;
+					padding-top: 10px;
+					position: relative;
+
+					.carName {
+						position: absolute;
+						top: -25%;
+						font-size: 0.7rem;
+						left: 12%;
+					}
+				}
+
+				.car {
+					width: 100px;
+					height: 50px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					margin-bottom: -999px;
+				}
+			}
+		}
+	}
+}
+
+.pagination {
+	bottom: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	position: fixed;
+}
+
+@media (prefers-color-scheme: dark) {
+	.mainWrapper {
+		.garageContainer {
+			.raceTrackContainer {
+				.raceTrack {
+					background-color: #121212;
+				}
+			}
+		}
+	}
+}

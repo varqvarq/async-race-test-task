@@ -7,6 +7,8 @@ interface InputProps {
 	name?: string;
 	className?: string;
 	placeholder?: string;
+	value?: string;
+	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -14,6 +16,8 @@ const Input: React.FC<InputProps> = ({
 	name,
 	className,
 	placeholder,
+	value,
+	onChange,
 }) => {
 	const classNames = clsx(style.input, className);
 
@@ -23,6 +27,8 @@ const Input: React.FC<InputProps> = ({
 			name={name}
 			className={classNames}
 			placeholder={placeholder}
+			value={value}
+			onChange={onChange}
 		/>
 	);
 };

@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { ICar, QueryParams, ResponseData } from '../../types';
@@ -120,13 +119,10 @@ const garageSlice = createSlice({
 			})
 			.addCase(createCar.fulfilled, (state, action) => {
 				state.cars.push(action.payload);
-				// state.totalCount++;
 			});
 	},
 });
 
 export const selectGarageData = (state: RootState) => state.garageReducer;
-
-// export const { deleteCarLocally } = garageSlice.actions;
 
 export default garageSlice.reducer;

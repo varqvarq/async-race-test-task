@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { ICar, QueryParams, ResponseData } from '../../types';
@@ -23,7 +24,7 @@ export const fetchAllCars = createAsyncThunk<
 	ResponseData<ICar[]>,
 	QueryParams,
 	{ rejectValue: string }
->('garage/fetchAllCars', async (params, thunkApi) => {
+>('garage/fetchAllCars', async (params: QueryParams, thunkApi) => {
 	try {
 		return await api.garage.getAll(params);
 	} catch (e: unknown) {

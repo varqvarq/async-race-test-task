@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { IWinner, QueryParams, ResponseData } from '../../types';
@@ -63,7 +64,7 @@ export const updateWinner = createAsyncThunk<
 	IWinner,
 	IWinner,
 	{ rejectValue: string }
->('winners/updatewinner', async (winner, thunkApi) => {
+>('winners/updatewinner', async (winner: IWinner, thunkApi) => {
 	try {
 		return (await api.winners.update(winner.id, winner)).data;
 	} catch (e) {

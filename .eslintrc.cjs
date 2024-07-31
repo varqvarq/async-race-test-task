@@ -23,6 +23,7 @@ module.exports = {
 			'warn',
 			{ allowConstantExport: true },
 		],
+		'no-plusplus': 'off',
 		'@typescript-eslint/no-namespace': 'off',
 		'no-duplicate-imports': 'error',
 		'prettier/prettier': 'error',

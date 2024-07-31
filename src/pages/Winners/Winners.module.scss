@@ -1,0 +1,63 @@
+.winnersContainer {
+	width: 100%;
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	padding: 0 30px 0 30px;
+	min-height: 100dvh;
+
+	.pagination {
+		align-self: end;
+	}
+
+	.winnerTable {
+		width: 100%;
+		border-collapse: collapse;
+		align-self: start;
+
+		.car {
+			height: 0px;
+			width: 0px;
+		}
+
+		& th {
+			background-color: #3e3f3f;
+			color: white;
+			cursor: pointer;
+			position: relative;
+
+			&:hover {
+				background-color: rgb(208, 175, 141);
+			}
+
+			.upArrow {
+				color: rgb(3, 255, 12);
+				right: 10px;
+			}
+			.downArrow {
+				color: rgb(255, 3, 3);
+				right: 10px;
+			}
+		}
+
+		& td,
+		& th {
+			text-align: center;
+			color: white;
+			border: 1px solid #474747;
+		}
+	}
+}
+
+@media (prefers-color-scheme: light) {
+	.winnersContainer {
+		.winnerTable {
+			& th {
+				background-color: antiquewhite;
+			}
+			& td,
+			& th {
+				color: black;
+			}
+		}
+	}
+}

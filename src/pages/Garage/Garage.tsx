@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { IWinner } from '../../types';
+import { IWinner, RaceWinner } from '../../types';
 
 import { drive, toggleEngine } from '../../api';
 import CarForm from '../../components/CarForm/CarForm';
 import CarIcon from '../../components/CarIcon/CarIcon';
 import Pagination from '../../components/Pagination/Pagination';
+import WinnerBanner from '../../components/WinnerBanner/WinnerBanner';
 import Button from '../../components/common/Button/Button';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
@@ -24,11 +25,6 @@ import {
 import generateRandomCars from '../../utils/generateCars';
 
 import style from './Garage.module.scss';
-
-interface RaceWinner {
-	id: number;
-	time: number;
-}
 
 const Garage = () => {
 	const dispatch = useAppDispatch();
@@ -337,21 +333,7 @@ const Garage = () => {
 			</ul>
 
 			{winner !== null && raceInProgress && (
-				<div className={style.winner}>
-					<p>
-						Winner:
-						<br /> <b>{cars.find((car) => car.id === winner.id)?.name}</b>
-					</p>
-					<p>
-						Time: <br />
-						<b>{winner.time.toFixed(2)}</b> seconds
-					</p>
-					<Button
-						text='x'
-						className={style.winnerCloseButton}
-						onClick={() => setWinner(null)}
-					/>
-				</div>
+				<WinnerBanner winner={winner} setWinner={setWinner} />
 			)}
 		</div>
 	);

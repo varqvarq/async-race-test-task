@@ -10,6 +10,11 @@ export interface IWinner {
 	id: number;
 }
 
+export interface RaceWinner {
+	id: number;
+	time: number;
+}
+
 export interface ResponseData<T> {
 	data: T;
 	totalCount?: number;

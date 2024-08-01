@@ -1,6 +1,6 @@
 .winner {
 	width: 300px;
-	font-size: 18x;
+	font-size: 18px;
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -10,9 +10,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	// font-size: 24px;
 	flex-direction: column;
-	transform: translate(-50%, -170%);
+	transform: translate(-50%, -90%);
 	text-align: center;
 	border: 8px solid #5d33d9d2;
 

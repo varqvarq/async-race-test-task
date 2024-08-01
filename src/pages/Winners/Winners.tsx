@@ -132,11 +132,9 @@ const Winners: React.FC = () => {
 					)}
 				</tbody>
 			</table>
-			{totalCount > 7 && (
-				<div className={style.pagination}>
-					<Pagination totalCount={totalCount} />
-				</div>
-			)}
+			<div className={style.pagination}>
+				<Pagination totalCount={totalCount} />
+			</div>
 		</div>
 	);
 };

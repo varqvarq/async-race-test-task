@@ -2,18 +2,20 @@
 	padding: 0 20px;
 	display: flex;
 	flex-direction: column;
+	height: 100dvh;
+	// margin-top: -30px;
 
 	.button {
 		max-width: 50px;
 		width: 100%;
 		text-transform: uppercase;
-		padding: 1px 0;
+		padding: 5px 0;
 		font-size: 0.6rem;
 		border-radius: 4px;
 	}
 
 	.raceControl {
-		margin: 20px 0;
+		margin: 15px 0;
 		display: flex;
 		gap: 5px;
 		flex-wrap: wrap;
@@ -22,6 +24,9 @@
 	.garageContainer {
 		padding: 0;
 		position: relative;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
 
 		.carContainer {
 			width: 100%;
@@ -66,13 +71,17 @@
 				}
 			}
 		}
+
+		.pagination {
+			margin-top: auto;
+		}
 	}
 }
 
 @media (prefers-color-scheme: dark) {
 	.mainWrapper {
-		.garageContainer {
-			.raceTrackContainer {
+		& {
+			& {
 				.raceTrack {
 					background-color: #121212;
 				}

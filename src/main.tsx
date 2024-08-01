@@ -1,3 +1,4 @@
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import {
@@ -10,7 +11,6 @@ import {
 
 import App from './App';
 import NotFound from './components/NotFound/NotFound';
-// import Header from './components/Header/Header';
 import Garage from './pages/Garage/Garage';
 import Winners from './pages/Winners/Winners';
 import store from './redux/store';
@@ -28,9 +28,9 @@ const router = createBrowserRouter(
 );
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-	// <React.StrictMode>
-	<Provider store={store}>
-		<RouterProvider router={router} />
-	</Provider>
-	// </React.StrictMode>
+	<React.StrictMode>
+		<Provider store={store}>
+			<RouterProvider router={router} />
+		</Provider>
+	</React.StrictMode>
 );

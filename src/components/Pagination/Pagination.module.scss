@@ -12,7 +12,7 @@
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		padding: 20px 20px;
+		padding: 15px 15px;
 		margin-right: 5px;
 		border-radius: 5px;
 		font-size: 12px;
@@ -21,7 +21,7 @@
 			background-color: rgb(139, 139, 139);
 		}
 
-		&.disabled {
+		& .disabled {
 			color: gray;
 			pointer-events: none;
 			cursor: default;
@@ -29,6 +29,6 @@
 	}
 
 	.active {
-		background-color: rgba(235, 133, 43, 0.851);
+		background-color: rgba(129, 97, 243, 0.851);
 	}
 }

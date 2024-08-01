@@ -149,6 +149,7 @@ const Garage = () => {
 				if (
 					!winCheck &&
 					+carPosition.toFixed(0) === finish &&
+					raceStarted &&
 					!singleRaceStarted
 				) {
 					winCheck = true;

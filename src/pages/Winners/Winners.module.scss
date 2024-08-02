@@ -1,0 +1,67 @@
+.winnersContainer {
+	width: 100%;
+	padding: 0 30px 0 30px;
+	height: 100dvh;
+	display: flex;
+	flex-direction: column;
+
+	.pagination {
+		margin-top: auto;
+		margin-bottom: 50px;
+	}
+
+	.winnerTable {
+		width: 100%;
+		border-collapse: collapse;
+
+		.car {
+			width: 100px;
+
+			& svg {
+				height: 50px;
+				width: 50px;
+			}
+		}
+
+		& th {
+			background-color: #3e3f3f;
+			color: white;
+			cursor: pointer;
+			position: relative;
+
+			&:hover {
+				background-color: rgb(208, 175, 141);
+			}
+
+			.upArrow {
+				color: rgb(3, 255, 12);
+				right: 10px;
+			}
+			.downArrow {
+				color: rgb(255, 3, 3);
+				right: 10px;
+			}
+		}
+
+		& td,
+		& th {
+			text-align: center;
+			color: white;
+			border: 1px solid #474747;
+		}
+	}
+}
+
+@media (prefers-color-scheme: light) {
+	.winnersContainer {
+		.winnerTable {
+			& th {
+				background-color: antiquewhite;
+			}
+			& td,
+			& th {
+				color: black;
+			}
+		}
+	}
+}

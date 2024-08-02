@@ -1,0 +1,51 @@
+.winner {
+	width: 300px;
+	font-size: 18px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	background-color: #9475f2;
+	border-radius: 20px;
+	z-index: 999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	transform: translate(-50%, -90%);
+	text-align: center;
+	border: 8px solid #5d33d9d2;
+
+	.winnerName {
+		margin-bottom: -20px;
+	}
+
+	.winnerTime {
+		margin-top: -20px;
+	}
+
+	.winnerCloseButton {
+		position: absolute;
+		background: none;
+		top: 6px;
+		right: 10px;
+		padding: 0;
+		border: none;
+		font-size: 14px;
+
+		&:hover {
+			color: red;
+			background-color: none;
+			outline: none;
+			border: none;
+		}
+
+		&:focus,
+		&:focus-visible {
+			outline: none;
+		}
+
+		&:active {
+			border: none;
+		}
+	}
+}

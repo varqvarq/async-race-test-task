@@ -1,0 +1,91 @@
+.mainWrapper {
+	padding: 0 20px;
+	display: flex;
+	flex-direction: column;
+	height: 100dvh;
+
+	.button {
+		max-width: 50px;
+		width: 100%;
+		text-transform: uppercase;
+		padding: 5px 0;
+		font-size: 0.6rem;
+		border-radius: 4px;
+	}
+
+	.raceControl {
+		margin: 15px 0;
+		display: flex;
+		gap: 5px;
+		flex-wrap: wrap;
+	}
+
+	.garageContainer {
+		padding: 0;
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+
+		.carContainer {
+			width: 100%;
+			display: flex;
+			margin-bottom: 10px;
+			align-items: center;
+
+			.carControl {
+				display: flex;
+				gap: 5px;
+				flex-wrap: wrap;
+				max-width: 120px;
+			}
+
+			.raceTrackContainer {
+				width: 100%;
+				display: flex;
+
+				.raceTrack {
+					min-height: 50px;
+					border: 1px solid black;
+					border-radius: 4px;
+					width: 100%;
+					padding-top: 10px;
+					position: relative;
+
+					.carName {
+						position: absolute;
+						top: -25%;
+						font-size: 0.7rem;
+						left: 12%;
+					}
+				}
+
+				.car {
+					width: 100px;
+					height: 50px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					margin-bottom: -999px;
+				}
+			}
+		}
+
+		.pagination {
+			margin-top: auto;
+			margin-bottom: 50px;
+		}
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.mainWrapper {
+		& {
+			& {
+				.raceTrack {
+					background-color: #121212;
+				}
+			}
+		}
+	}
+}

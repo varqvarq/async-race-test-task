@@ -37,6 +37,7 @@ const Header: React.FC = () => {
 				text='Garage'
 				disabled={location.pathname === '/garage'}
 				onClick={() => handleNavigation('/garage')}
+				className={style.garageButton}
 			/>
 			<Button
 				text='Winners'

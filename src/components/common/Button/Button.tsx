@@ -19,7 +19,6 @@ const Button: React.FC<ButtonProps> = ({
 	className,
 	onClick,
 	disabled,
-	children,
 }) => {
 	const classNames = clsx(style.button, className);
 
@@ -31,7 +30,6 @@ const Button: React.FC<ButtonProps> = ({
 			disabled={disabled}
 		>
 			{text}
-			{children}
 		</button>
 	);
 };

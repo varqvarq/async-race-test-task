@@ -5,12 +5,10 @@ import Header from './components/Header/Header';
 import './App.css';
 
 const App: React.FC = () => (
-	<>
+	<main>
 		<Header />
-		<main>
-			<Outlet />
-		</main>
-	</>
+		<Outlet />
+	</main>
 );
 
 export default App;

@@ -68,6 +68,7 @@ const Garage = () => {
 		};
 
 		fetch();
+		setRaceInProgress(false);
 	}, [dispatch, page, setSearchParams, totalCount]);
 
 	const handleEngine =

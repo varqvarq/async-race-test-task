@@ -46,11 +46,12 @@
 
 				.raceTrack {
 					min-height: 50px;
-					border: 1px solid black;
+					border: 1px solid transparent;
 					border-radius: 4px;
 					width: 100%;
 					padding-top: 10px;
 					position: relative;
+					background-color: #1a1a1a;
 
 					.carName {
 						position: absolute;
@@ -78,14 +79,16 @@
 	}
 }
 
-@media (prefers-color-scheme: dark) {
-	.mainWrapper {
-		& {
-			& {
-				.raceTrack {
-					background-color: #121212;
-				}
-			}
-		}
-	}
-}
+// @media (prefers-color-scheme: light) {
+// 	.mainWrapper {
+// 		.garageContainer {
+// 			.carContainer {
+// 				.raceTrackContainer {
+// 					.raceTrack {
+// 						background-color: #efefef;
+// 					}
+// 				}
+// 			}
+// 		}
+// 	}
+// }

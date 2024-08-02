@@ -31,7 +31,7 @@ const Winners: React.FC = () => {
 			let currentPage = page;
 
 			await dispatch(
-				fetchAllWinners({ page: currentPage, sort, order })
+				fetchAllWinners({ page: currentPage, sort, order, limit: 10 })
 			).unwrap();
 
 			const allPages = Math.ceil(totalCount / 7);

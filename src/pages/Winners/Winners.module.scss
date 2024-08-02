@@ -52,16 +52,16 @@
 	}
 }
 
-@media (prefers-color-scheme: light) {
-	.winnersContainer {
-		.winnerTable {
-			& th {
-				background-color: antiquewhite;
-			}
-			& td,
-			& th {
-				color: black;
-			}
-		}
-	}
-}
+// @media (prefers-color-scheme: light) {
+// 	.winnersContainer {
+// 		.winnerTable {
+// 			& th {
+// 				background-color: antiquewhite;
+// 			}
+// 			& td,
+// 			& th {
+// 				color: black;
+// 			}
+// 		}
+// 	}
+// }

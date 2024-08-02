@@ -1,5 +1,5 @@
-## Deployment: https://async-race-test-task.vercel.app
-## Task: https://github.com/rolling-scopes-school/tasks/blob/master/epam/async-race.md
+### Deployment: https://async-race-test-task.vercel.app
+### Task: https://github.com/rolling-scopes-school/tasks/blob/master/epam/async-race.md
 ## Checklist 400 / 400 pts
 
 - [x] **Deployment Platform**

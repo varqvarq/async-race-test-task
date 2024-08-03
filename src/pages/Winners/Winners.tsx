@@ -5,6 +5,7 @@ import { ICar, QueryParams } from '../../types';
 
 import CarIcon from '../../components/CarIcon/CarIcon';
 import Pagination from '../../components/Pagination/Pagination';
+import { DEFAULT_PAGE, WINNERS_PER_PAGE } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getCarById } from '../../redux/garage/garageSlice';
 import {
@@ -14,27 +15,29 @@ import {
 
 import style from './Winners.module.scss';
 
-const WINNERS_PER_PAGE = 10;
-
 const Winners: React.FC = () => {
-	const { winners, totalCount } = useAppSelector(selectWinnersData);
+	const { winners } = useAppSelector(selectWinnersData);
 	const dispatch = useAppDispatch();
-	const [carDetails, setCarDetails] = useState<Record<number, ICar>>({});
+
+	const { data, totalCount } = winners;
+
+	const [winnerDetails, setWinnerDetails] = useState<Record<number, ICar>>({});
 	const [sort, setSort] = useState<QueryParams['sort']>();
 	const [order, setOrder] = useState<QueryParams['order']>();
 
-	const [searchParams, setSearchParams] = useSearchParams({ page: '1' });
-	const query = searchParams.get('page');
+	const [searchParams, setSearchParams] = useSearchParams({
+		page: DEFAULT_PAGE.toString(),
+	});
 
-	const page = query && !Number.isNaN(+query) && +query > 0 ? +query : 1;
+	const query = searchParams.get('page');
+	const page =
+		query && !Number.isNaN(+query) && +query > 0 ? +query : DEFAULT_PAGE;
 
 	useEffect(() => {
-		const fetch = async () => {
-			let currentPage = page;
-
+		const fetchData = async () => {
 			await dispatch(
 				fetchAllWinners({
-					page: currentPage,
+					page,
 					sort,
 					order,
 					limit: WINNERS_PER_PAGE,
@@ -42,45 +45,55 @@ const Winners: React.FC = () => {
 			).unwrap();
 
 			const allPages = Math.ceil(totalCount / WINNERS_PER_PAGE);
-			console.log(allPages);
 
-			if (currentPage > allPages && allPages > 0) {
-				currentPage = allPages;
+			if (page > allPages && allPages > 0) {
+				setSearchParams({ page: allPages.toString() });
 			}
-
-			setSearchParams({ page: currentPage.toString() });
 		};
 
-		fetch();
-	}, [dispatch, order, page, setSearchParams, sort, totalCount]);
+		if (!totalCount) {
+			fetchData();
+		}
+	}, [dispatch, sort, order, totalCount, page, setSearchParams]);
 
 	useEffect(() => {
 		const fetchWinnerDetails = async () => {
-			winners.map(async (winner) => {
-				if (!carDetails[winner.id]) {
-					const result = await dispatch(getCarById(winner.id)).unwrap();
+			const winnersWithoutDetails = data.filter(
+				(winner) => !winnerDetails[winner.id]
+			);
 
-					setCarDetails((prev) => ({
-						...prev,
-						[winner.id]: result,
-					}));
-				}
-			});
+			if (winnersWithoutDetails.length === 0) return;
+
+			const ids = winnersWithoutDetails.map((winner) => winner.id);
+
+			const detailsPromises = ids.map((id) =>
+				dispatch(getCarById(id)).unwrap()
+			);
+			const details = await Promise.all(detailsPromises);
+
+			const newCarDetails = details.reduce(
+				(acc, car) => {
+					acc[car.id!] = car;
+					return acc;
+				},
+				{} as Record<number, ICar>
+			);
+
+			setWinnerDetails((prev) => ({
+				...prev,
+				...newCarDetails,
+			}));
 		};
 
-		if (winners.length > 0) {
+		if (data.length > 0) {
 			fetchWinnerDetails();
 		}
-	}, [dispatch, winners, carDetails]);
+	}, [dispatch, data, winnerDetails]);
 
 	const handleSort = (field: QueryParams['sort']) => {
-		if (winners.length) {
+		if (data.length) {
 			setSort(field);
-			if (order === 'ASC') {
-				setOrder('DESC');
-			} else {
-				setOrder('ASC');
-			}
+			setOrder((prevOrder) => (prevOrder === 'ASC' ? 'DESC' : 'ASC'));
 		}
 	};
 
@@ -101,6 +114,7 @@ const Winners: React.FC = () => {
 				<h2>Winners</h2>
 				<span>Click on headers to sort</span>
 			</div>
+
 			<table className={style.winnerTable}>
 				<thead>
 					<tr>
@@ -119,14 +133,14 @@ const Winners: React.FC = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{winners.length ? (
-						winners.map((winner) => (
+					{data.length ? (
+						data.map((winner) => (
 							<tr key={winner.id}>
 								<td>{winner.id}</td>
 								<td className={style.car}>
-									<CarIcon color={carDetails[winner.id]?.color || 'grey'} />
+									<CarIcon color={winnerDetails[winner.id]?.color || 'grey'} />
 								</td>
-								<td>{carDetails[winner.id]?.name || 'Loading...'}</td>
+								<td>{winnerDetails[winner.id]?.name || 'Loading...'}</td>
 								<td>{winner.wins}</td>
 								<td>{winner.time}</td>
 							</tr>
@@ -140,6 +154,7 @@ const Winners: React.FC = () => {
 					)}
 				</tbody>
 			</table>
+
 			<div className={style.pagination}>
 				<Pagination
 					totalCount={totalCount}

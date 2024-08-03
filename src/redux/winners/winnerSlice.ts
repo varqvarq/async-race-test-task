@@ -7,15 +7,19 @@ import api from '../../api';
 import type { RootState } from '../store';
 
 export interface IWinnersInitialState {
-	winners: IWinner[];
-	totalCount: number;
+	winners: {
+		data: IWinner[];
+		totalCount: number;
+	};
 	status: 'idle' | 'loading' | 'succeeded' | 'failed';
 	error: string | null;
 }
 
 const initialState: IWinnersInitialState = {
-	winners: [],
-	totalCount: 0,
+	winners: {
+		data: [],
+		totalCount: 0,
+	},
 	status: 'idle',
 	error: '',
 };
@@ -99,11 +103,7 @@ const winnersSlice = createSlice({
 			})
 			.addCase(fetchAllWinners.fulfilled, (state, action) => {
 				state.status = 'succeeded';
-				state.winners = action.payload.data;
-
-				if (action.payload.totalCount) {
-					state.totalCount = action.payload.totalCount;
-				}
+				state.winners = action.payload;
 			})
 			.addCase(fetchAllWinners.rejected, (state, action) => {
 				state.status = 'failed';
@@ -111,18 +111,18 @@ const winnersSlice = createSlice({
 					state.error = action.error.message;
 			})
 			.addCase(deleteWinner.fulfilled, (state, action) => {
-				state.winners = state.winners.filter(
+				state.winners.data = state.winners.data.filter(
 					(winner) => winner.id !== action.payload
 				);
-				state.totalCount--;
+				state.winners.totalCount--;
 			})
 			.addCase(updateWinner.fulfilled, (state, action) => {
-				state.winners = state.winners.map((winner) =>
+				state.winners.data = state.winners.data.map((winner) =>
 					winner.id === action.payload.id ? action.payload : winner
 				);
 			})
 			.addCase(createWinner.fulfilled, (state, action) => {
-				state.winners.push(action.payload);
+				state.winners.data.push(action.payload);
 			});
 	},
 });

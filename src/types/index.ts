@@ -1,3 +1,5 @@
+import { ActionStatus } from '../constants';
+
 export interface ICar {
 	name: string;
 	color: string;
@@ -17,12 +19,22 @@ export interface RaceWinner {
 
 export interface ResponseData<T> {
 	data: T;
-	totalCount?: number;
+	totalCount: number;
 }
 
 export interface QueryParams {
 	page?: number;
 	limit?: number;
-	sort?: 'id' | 'wins' | 'time';
-	order?: 'ASC' | 'DESC';
+	sort?: SortFields;
+	order?: SortOrder;
+	id?: number;
+	status?: ActionStatus;
+}
+
+type SortFields = 'id' | 'wins' | 'time';
+type SortOrder = 'ASC' | 'DESC';
+
+export interface CarEngineInfo {
+	velocity: number;
+	distance: number;
 }

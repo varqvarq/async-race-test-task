@@ -103,6 +103,7 @@ const garageSlice = createSlice({
 			.addCase(fetchAllCars.fulfilled, (state, action) => {
 				state.status = 'succeeded';
 				state.garage = action.payload;
+
 			})
 			.addCase(fetchAllCars.rejected, (state, action) => {
 				state.status = 'failed';

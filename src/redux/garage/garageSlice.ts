@@ -7,15 +7,19 @@ import api from '../../api';
 import type { RootState } from '../store';
 
 export interface IGarageInitialState {
-	cars: ICar[];
-	totalCount: number;
+	garage: {
+		data: ICar[];
+		totalCount: number;
+	};
 	status: 'idle' | 'loading' | 'succeeded' | 'failed';
 	error: string | null;
 }
 
 const initialState: IGarageInitialState = {
-	cars: [],
-	totalCount: 0,
+	garage: {
+		data: [],
+		totalCount: 0,
+	},
 	status: 'idle',
 	error: '',
 };
@@ -98,8 +102,7 @@ const garageSlice = createSlice({
 			})
 			.addCase(fetchAllCars.fulfilled, (state, action) => {
 				state.status = 'succeeded';
-				state.cars = action.payload.data;
-				state.totalCount = action.payload.totalCount;
+				state.garage = action.payload;
 			})
 			.addCase(fetchAllCars.rejected, (state, action) => {
 				state.status = 'failed';
@@ -107,16 +110,18 @@ const garageSlice = createSlice({
 					state.error = action.error.message;
 			})
 			.addCase(deleteCar.fulfilled, (state, action) => {
-				state.cars = state.cars.filter((car) => car.id !== action.payload);
-				state.totalCount--;
+				state.garage.data = state.garage.data.filter(
+					(car) => car.id !== action.payload
+				);
+				state.garage.totalCount--;
 			})
 			.addCase(updateCar.fulfilled, (state, action) => {
-				state.cars = state.cars.map((car) =>
+				state.garage.data = state.garage.data.map((car) =>
 					car.id === action.payload.id ? action.payload : car
 				);
 			})
 			.addCase(createCar.fulfilled, (state, action) => {
-				state.cars.push(action.payload);
+				state.garage.data.push(action.payload);
 			});
 	},
 });

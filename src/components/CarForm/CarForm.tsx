@@ -26,7 +26,7 @@ const CarForm: React.FC<CarFormProps> = ({
 	setCarId,
 	raceInProgress,
 }) => {
-	const carToEdit = useAppSelector(selectGarageData).cars.find(
+	const carToEdit = useAppSelector(selectGarageData).garage.find(
 		(car: ICar) => car.id === carId
 	);
 	const dispatch = useAppDispatch();

@@ -30,7 +30,8 @@ import style from './Garage.module.scss';
 
 const Garage = () => {
 	const dispatch = useAppDispatch();
-	const { cars, totalCount, status } = useAppSelector(selectGarageData);
+	const { garage, status } = useAppSelector(selectGarageData);
+	const { data: cars, totalCount } = garage;
 
 	const [searchParams, setSearchParams] = useSearchParams({
 		page: DEFAULT_PAGE.toString(),

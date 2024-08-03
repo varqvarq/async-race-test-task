@@ -9,6 +9,7 @@ import CarIcon from '../../components/CarIcon/CarIcon';
 import Pagination from '../../components/Pagination/Pagination';
 import WinnerBanner from '../../components/WinnerBanner/WinnerBanner';
 import Button from '../../components/common/Button/Button';
+import { ActionStatus, CARS_PER_PAGE, DEFAULT_PAGE } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
 	createCar,
@@ -23,28 +24,31 @@ import {
 	updateWinner,
 } from '../../redux/winners/winnerSlice';
 import generateRandomCars from '../../utils/generateCars';
+import getCarPositon from '../../utils/getCarPosition';
 
 import style from './Garage.module.scss';
-
-const CARS_PER_PAGE = 7;
 
 const Garage = () => {
 	const dispatch = useAppDispatch();
 	const { cars, totalCount, status } = useAppSelector(selectGarageData);
 
-	const [searchParams, setSearchParams] = useSearchParams({ page: '1' });
+	const [searchParams, setSearchParams] = useSearchParams({
+		page: DEFAULT_PAGE.toString(),
+	});
 	const [winner, setWinner] = useState<RaceWinner | null>(null);
 	const [raceInProgress, setRaceInProgress] = useState<boolean>(false);
-	const [singleRaceInProgress, setOneRaceInProgress] = useState<number[]>([]);
+	const [singleRaceInProgress, setSingleRaceInProgress] = useState<number[]>(
+		[]
+	);
+
 	const [carId, setCarId] = useState<number | undefined>();
 	const [generation, setGeneration] = useState(false);
 
-	let winCheck = false;
-	let raceStarted = false;
-	let singleRaceStarted = false;
+	const winCheckRef = useRef(false);
+	const raceStartedRef = useRef(false);
+	const singleRaceStartedRef = useRef(false);
 
 	const carRefs = useRef<Record<number, HTMLDivElement>>({});
-	const garageRef = useRef<HTMLUListElement | null>(null);
 
 	const setCarRef = (id: number) => (el: HTMLDivElement) => {
 		carRefs.current[id] = el;
@@ -52,33 +56,37 @@ const Garage = () => {
 
 	const query = searchParams.get('page');
 
-	const page = query && !Number.isNaN(+query) && +query > 0 ? +query : 1;
+	const page =
+		query && !Number.isNaN(+query) && +query > 0 ? +query : DEFAULT_PAGE;
 
 	useEffect(() => {
-		const fetch = async () => {
+		const fetchData = async () => {
 			let currentPage = page;
 
-			await dispatch(fetchAllCars({ page: currentPage })).unwrap();
+			const response = await dispatch(
+				fetchAllCars({ page: currentPage })
+			).unwrap();
 
-			const allPages = Math.ceil(totalCount / CARS_PER_PAGE);
+			const allPages = Math.ceil(response.totalCount / CARS_PER_PAGE);
 
-			if (currentPage > allPages && allPages > 0) {
+			if (currentPage > allPages) {
 				currentPage = allPages;
 			}
 
 			setSearchParams({ page: currentPage.toString() });
 		};
+		fetchData();
 
-		fetch();
 		setRaceInProgress(false);
-	}, [dispatch, page, setSearchParams, totalCount]);
+	}, [dispatch, page, setSearchParams]);
 
 	const handleEngine =
-		(engineStatus: 'started' | 'stopped') => async (id: number) =>
+		(engineStatus: ActionStatus.STARTED | ActionStatus.STOPPED) =>
+		async (id: number) =>
 			toggleEngine(id, engineStatus);
 
-	const startEngine = handleEngine('started');
-	const stopEngine = handleEngine('stopped');
+	const startEngine = handleEngine(ActionStatus.STARTED);
+	const stopEngine = handleEngine(ActionStatus.STOPPED);
 
 	const handleWinner = async (id: number, time: number) => {
 		const existingWinner = await dispatch(getWinnerById(id));
@@ -104,12 +112,6 @@ const Garage = () => {
 		await dispatch(createWinner(newWinner));
 	};
 
-	const getCarPositon = (car: HTMLDivElement) => {
-		const parentRect = car.parentElement!.getBoundingClientRect();
-		const carRect = car.getBoundingClientRect();
-		return carRect.left - parentRect.left - 1;
-	};
-
 	const handleDrive = async (id: number) => {
 		const currentCar = carRefs.current[id];
 
@@ -118,48 +120,52 @@ const Garage = () => {
 		}
 
 		const response = await startEngine(id);
-		const time = +(response.distance / response.velocity / 1000).toFixed(2);
+		const time = +(
+			response.data.distance /
+			response.data.velocity /
+			1000
+		).toFixed(2);
 
 		const raceLenght = currentCar.parentElement.clientWidth;
 		const carLenght = currentCar.clientWidth;
 
-		const finish = raceLenght - carLenght;
+		const finish = Math.round(raceLenght - carLenght);
 
 		try {
-			currentCar.style.transform = `translateX(${finish}px)`;
-			currentCar.style.transition = `transform ${time}s ease-in-out`;
+			if (raceStartedRef.current || singleRaceStartedRef.current) {
+				currentCar.style.transform = `translateX(${finish}px)`;
+				currentCar.style.transition = `transform ${time}s ease-in-out`;
+			}
 
 			await drive(id);
 
-			const carPosition = getCarPositon(currentCar);
+			const carPosition = Math.round(getCarPositon(currentCar));
 
 			if (
-				!winCheck &&
-				+carPosition.toFixed(0) === finish &&
-				raceStarted &&
-				!singleRaceStarted
+				!winCheckRef.current &&
+				carPosition === finish &&
+				raceStartedRef.current &&
+				!singleRaceStartedRef.current
 			) {
-				winCheck = true;
+				winCheckRef.current = true;
 				setWinner({ id, time });
-
 				await handleWinner(id, time);
 			}
 		} catch (e) {
 			const computedStyles = getComputedStyle(currentCar);
 			const carPosition = getCarPositon(currentCar);
-
-			if (e instanceof Error && e.message === '500') {
+			if (e instanceof Error && e.message === 'engine break') {
 				if (
-					!winCheck &&
-					+carPosition.toFixed(0) === finish &&
-					raceStarted &&
-					!singleRaceStarted
+					!winCheckRef.current &&
+					carPosition === finish &&
+					raceStartedRef.current &&
+					!singleRaceStartedRef.current
 				) {
-					winCheck = true;
+					winCheckRef.current = true;
 					setWinner({ id, time });
-
 					await handleWinner(id, time);
 				}
+
 				currentCar.style.transform = computedStyles.transform;
 				currentCar.style.transition = 'none';
 			} else {
@@ -169,64 +175,84 @@ const Garage = () => {
 		}
 	};
 
-	const handleRace = async (id: number, raceStatus: 'started' | 'stopped') => {
+	const toggleRace = async (
+		id: number,
+		raceStatus: ActionStatus.STARTED | ActionStatus.STOPPED
+	) => {
 		const currentCar = carRefs.current[id];
 
 		currentCar.style.transform = `translateX(0)`;
 		currentCar.style.transition = `transform 0.3s ease-in-out`;
 
-		if ((raceStatus === 'started' && raceStarted) || singleRaceStarted) {
+		if (
+			raceStatus === ActionStatus.STARTED &&
+			(raceStartedRef.current || singleRaceStartedRef.current)
+		) {
 			await handleDrive(id);
-			return;
+		} else {
+			await stopEngine(id);
 		}
-
-		currentCar.style.transform = `translateX(0)`;
-		currentCar.style.transition = `transform 0.3s ease-in-out`;
-		await stopEngine(id);
 	};
 
-	const startRace = async () => {
-		setRaceInProgress(true);
-		setWinner(null);
-		raceStarted = true;
+	const handleRace =
+		(raceStatus: ActionStatus.STARTED | ActionStatus.STOPPED) => async () => {
+			setRaceInProgress(raceStatus === ActionStatus.STARTED);
+			raceStartedRef.current = raceStatus === ActionStatus.STARTED;
+			setWinner(null);
+			winCheckRef.current = false;
 
-		const promises = cars.map((car) => handleRace(car.id!, 'started'));
-		await Promise.all(promises);
-	};
+			const promises = cars.map((car) => toggleRace(car.id!, raceStatus));
+			await Promise.all(promises);
+		};
 
-	const recetRace = async () => {
-		setRaceInProgress(false);
-		setWinner(null);
-		raceStarted = false;
+	const handleSingleRace =
+		(raceStatus: ActionStatus.STARTED | ActionStatus.STOPPED) =>
+		async (id: number) => {
+			singleRaceStartedRef.current = raceStatus === ActionStatus.STARTED;
 
-		const promises = cars.map((car) => handleRace(car.id!, 'stopped'));
-		await Promise.all(promises);
-	};
+			if (raceStatus === ActionStatus.STARTED) {
+				setSingleRaceInProgress((prev) => [...prev, id]);
+			} else {
+				setSingleRaceInProgress((prev) =>
+					prev.filter((raceCarId) => raceCarId !== id)
+				);
+			}
 
-	const startSingleRace = async (id: number) => {
-		singleRaceStarted = true;
-		setOneRaceInProgress([...singleRaceInProgress, id]);
-		await handleRace(id, 'started');
-	};
+			await toggleRace(id, raceStatus);
+		};
 
-	const stopSingleRace = async (id: number) => {
-		singleRaceStarted = false;
-		setOneRaceInProgress((prev) =>
-			prev.filter((raceCarId) => raceCarId !== id)
-		);
+	const startRace = handleRace(ActionStatus.STARTED);
+	const recetRace = handleRace(ActionStatus.STOPPED);
 
-		await handleRace(id, 'stopped');
-	};
+	const startSingleRace = handleSingleRace(ActionStatus.STARTED);
+	const stopSingleRace = handleSingleRace(ActionStatus.STOPPED);
 
 	const handleCarGeneration = async () => {
+		setGeneration(true);
 		const randomCars = generateRandomCars();
 		const promises = randomCars.map((car) => dispatch(createCar(car)));
-		setGeneration(true);
 
 		await Promise.all(promises).then(() => {
 			setGeneration(false);
 			dispatch(fetchAllCars({ page }));
 		});
+	};
+
+	const handleCarDelete = async (id: number) => {
+		await dispatch(deleteCar(id));
+		await dispatch(deleteWinner(id));
+
+		const updatedTotalCount = totalCount - 1;
+		const allPages = Math.ceil(updatedTotalCount / CARS_PER_PAGE);
+		let currentPage = page;
+
+		if (currentPage > allPages && allPages > 0) {
+			currentPage = allPages;
+		}
+
+		setSearchParams({ page: currentPage.toString() });
+
+		await dispatch(fetchAllCars({ page: currentPage }));
 	};
 
 	return (
@@ -245,14 +271,17 @@ const Garage = () => {
 						className={style.button}
 						onClick={startRace}
 						disabled={
-							raceInProgress || !cars.length || !!singleRaceInProgress.length
+							raceInProgress ||
+							!cars.length ||
+							!!singleRaceInProgress.length ||
+							generation
 						}
 					/>
 					<Button
 						text='reset race'
 						className={style.button}
 						onClick={recetRace}
-						disabled={!raceInProgress || !cars.length}
+						disabled={!raceInProgress || !cars.length || generation}
 					/>
 					<Button
 						text='+100 cars'
@@ -265,7 +294,7 @@ const Garage = () => {
 				</div>
 			</div>
 
-			<ul className={style.garageContainer} ref={garageRef}>
+			<ul className={style.garageContainer}>
 				{cars.length > 0 ? (
 					cars.map((car) => (
 						<li key={car.id} className={style.carContainer}>
@@ -274,7 +303,9 @@ const Garage = () => {
 									text='start'
 									className={style.button}
 									disabled={
-										raceInProgress || singleRaceInProgress.includes(car.id!)
+										raceInProgress ||
+										singleRaceInProgress.includes(car.id!) ||
+										generation
 									}
 									onClick={() => startSingleRace(car.id!)}
 								/>
@@ -282,26 +313,31 @@ const Garage = () => {
 									text='stop'
 									className={style.button}
 									disabled={
-										raceInProgress || !singleRaceInProgress.includes(car.id!)
+										raceInProgress ||
+										!singleRaceInProgress.includes(car.id!) ||
+										generation
 									}
 									onClick={() => stopSingleRace(car.id!)}
 								/>
 								<Button
 									text='delete'
-									onClick={async () => {
-										await dispatch(deleteCar(car.id!));
-										await dispatch(deleteWinner(car.id!));
+									onClick={() => {
+										handleCarDelete(car.id!);
 									}}
 									className={style.button}
 									disabled={
-										raceInProgress || singleRaceInProgress.includes(car.id!)
+										raceInProgress ||
+										singleRaceInProgress.includes(car.id!) ||
+										generation
 									}
 								/>
 								<Button
 									text='edit'
 									className={style.button}
 									disabled={
-										raceInProgress || singleRaceInProgress.includes(car.id!)
+										raceInProgress ||
+										singleRaceInProgress.includes(car.id!) ||
+										generation
 									}
 									onClick={() => setCarId(car.id)}
 								/>
@@ -309,6 +345,9 @@ const Garage = () => {
 
 							<div className={style.raceTrackContainer}>
 								<div className={style.raceTrack}>
+									<h3 style={{ position: 'absolute', right: '100px' }}>
+										{car.id}
+									</h3>
 									{status !== 'loading' && (
 										<p className={style.carName}>{car.name}</p>
 									)}
@@ -329,7 +368,7 @@ const Garage = () => {
 					<h2>No cars in the garage...</h2>
 				)}
 
-				{totalCount > 7 && (
+				{totalCount > CARS_PER_PAGE && (
 					<div className={style.pagination}>
 						<Pagination
 							totalCount={totalCount}

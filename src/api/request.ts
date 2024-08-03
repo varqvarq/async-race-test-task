@@ -8,11 +8,13 @@ const request = async <T>(
 	options: RequestInit = {}
 ): Promise<ResponseData<T>> => {
 	const url = new URL(BASE_URL + endpoint);
+	let totalCount = 0;
 
 	if (params) {
 		Object.entries(params).forEach(([key, value]) => {
 			if (value !== undefined) {
-				url.searchParams.append(`_${key.toString()}`, value.toString());
+				const paramKey = key !== 'id' && key !== 'status' ? `_${key}` : key;
+				url.searchParams.append(paramKey, value.toString());
 			}
 		});
 	}
@@ -27,9 +29,11 @@ const request = async <T>(
 		}
 	}
 
-	const totalCount = params?.limit
-		? +(response.headers.get('X-Total-Count') || 0)
-		: undefined;
+	const responseHeader = response.headers.get('X-Total-Count');
+
+	if (params?.limit) {
+		totalCount = responseHeader ? +responseHeader : 0;
+	}
 
 	const data: T = await response.json();
 	return { data, totalCount };

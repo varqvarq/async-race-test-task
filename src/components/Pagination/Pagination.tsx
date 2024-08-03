@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { DEFAULT_PAGE } from '../../constants';
 import Button from '../common/Button/Button';
 
 import style from './Pagination.module.scss';
@@ -14,12 +15,12 @@ const Pagination: React.FC<PaginationProps> = ({
 	totalCount,
 	elementsPerPage,
 }) => {
-	const [params] = useSearchParams({ page: '1' });
-	const [currentPage, setCurrentPage] = useState(1);
+	const [params] = useSearchParams({ page: DEFAULT_PAGE.toString() });
+	const [currentPage, setCurrentPage] = useState(DEFAULT_PAGE);
 	const navigate = useNavigate();
 
 	const pageParams = params.get('page');
-	const page = pageParams ? +pageParams : 1;
+	const page = pageParams ? +pageParams : DEFAULT_PAGE;
 
 	const allPages = Math.ceil(totalCount / elementsPerPage);
 
@@ -30,7 +31,7 @@ const Pagination: React.FC<PaginationProps> = ({
 	}, [page]);
 
 	const onPrevClick = () => {
-		if (currentPage > 1) {
+		if (currentPage > DEFAULT_PAGE) {
 			navigate(`?page=${currentPage - 1}`);
 		}
 	};
@@ -49,41 +50,35 @@ const Pagination: React.FC<PaginationProps> = ({
 		<div className={style.list}>
 			<Button
 				text='&larr;'
-				onClick={() => onPrevClick()}
+				onClick={onPrevClick}
 				className={style.link}
-				disabled={currentPage <= 1}
+				disabled={currentPage <= DEFAULT_PAGE}
 			/>
 			<Button
-				text='1'
-				className={`${style.link} ${currentPage === 1 ? style.active : ''}`}
-				onClick={() => {
-					onPageChange(1);
-				}}
+				text={DEFAULT_PAGE.toString()}
+				className={`${style.link} ${currentPage === DEFAULT_PAGE ? style.active : ''}`}
+				onClick={() => onPageChange(DEFAULT_PAGE)}
 			/>
 
-			{currentPage > 1 && currentPage < allPages && (
+			{currentPage > DEFAULT_PAGE && currentPage < allPages && (
 				<Button
-					text={currentPage}
+					text={currentPage.toString()}
 					className={`${style.link} ${style.active}`}
-					onClick={() => {
-						onPageChange(currentPage);
-					}}
+					onClick={() => onPageChange(currentPage)}
 				/>
 			)}
 
-			{allPages > 1 && (
+			{allPages > DEFAULT_PAGE && (
 				<Button
-					text={allPages}
+					text={allPages.toString()}
 					className={`${style.link} ${currentPage === allPages ? style.active : ''}`}
-					onClick={() => {
-						onPageChange(allPages);
-					}}
+					onClick={() => onPageChange(allPages)}
 				/>
 			)}
 			<Button
 				text='&rarr;'
 				className={style.link}
-				onClick={() => onNextClick()}
+				onClick={onNextClick}
 				disabled={currentPage >= allPages}
 			/>
 		</div>

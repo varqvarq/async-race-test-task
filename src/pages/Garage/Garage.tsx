@@ -30,7 +30,8 @@ import style from './Garage.module.scss';
 
 const Garage = () => {
 	const dispatch = useAppDispatch();
-	const { cars, totalCount, status } = useAppSelector(selectGarageData);
+	const { garage, status } = useAppSelector(selectGarageData);
+	const { data: cars, totalCount } = garage;
 
 	const [searchParams, setSearchParams] = useSearchParams({
 		page: DEFAULT_PAGE.toString(),
@@ -368,14 +369,9 @@ const Garage = () => {
 					<h2>No cars in the garage...</h2>
 				)}
 
-				{totalCount > CARS_PER_PAGE && (
-					<div className={style.pagination}>
-						<Pagination
-							totalCount={totalCount}
-							elementsPerPage={CARS_PER_PAGE}
-						/>
-					</div>
-				)}
+				<div className={style.pagination}>
+					<Pagination totalCount={totalCount} elementsPerPage={CARS_PER_PAGE} />
+				</div>
 			</ul>
 
 			{winner !== null && raceInProgress && (

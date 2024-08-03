@@ -13,7 +13,7 @@ interface WinnerBannerProps {
 }
 
 const WinnerBanner: React.FC<WinnerBannerProps> = ({ winner, setWinner }) => {
-	const winnerCar = useAppSelector(selectGarageData).cars.find(
+	const winnerCar = useAppSelector(selectGarageData).garage.data.find(
 		(car) => car.id === winner.id
 	);
 

@@ -1,30 +1,57 @@
-# React + TypeScript + Vite
+### Deployment: https://async-race-test-task.vercel.app
+### Task: https://github.com/rolling-scopes-school/tasks/blob/master/epam/async-race.md
+## Checklist 400 / 400 pts
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- [x] **Deployment Platform**
+- [x] **Commit guidelines compliance**
+- [x] **Checklist included in README.md**
+- [x] **Score calculation**
+- [x] **UI Deployment link in README.md**
 
-Currently, two official plugins are available:
+### Basic Structure (80 / 80 points):
+- [x] **Two Views (10 points)**
+- [x] **Garage View Content (30 points)**  
+  - [x] Name of view
+  - [x] Car creation and editing panel
+  - [x] Race control panel
+  - [x] Garage section
+- [x] **Winners View Content (10 points)**
+  - [x] Name of view ("Winners")
+  - [x] Winners table
+  - [x] Pagination
+- [x] **Persistent State (30 points)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Garage View (90 / 90 points):
+- [x] **Car Creation And Editing Panel. CRUD Operations (20 points)**
+- [x] **Color Selection (10 points)**
+- [x] **Random Car Creation (20 points)**
+- [x] **Car Management Buttons (10 points)**
+- [x] **EXTRA POINTS (20 points):**
+  - [x] **Empty Garage**
+  - [x] **Empty Garage Page**
+     
+## 🏆 Winners View (50 / 50 points):
+- [x] **Display Winners (15 points)**
+- [x] **Pagination for Winners (10 points)**
+- [x] **Winners Table (15 points)**
+- [x] **Sorting Functionality (10 points)**
 
-## Expanding the ESLint configuration
+## 🚗 Race (170 / 170 points):
+- [x] **Start Engine Animation (20 points)**
+- [x] **Stop Engine Animation (20 points)**
+- [x] **Responsive Animation (30 points)**
+- [x] **Start Race Button (10 points)**
+- [x] **Reset Race Button (15 points)**
+- [x] **Winner Announcement (5 points)**
+- [x] **Button States (20 points)**
+- [x] **Actions during the race (50 points)**
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 🎨 Prettier and ESLint Configuration (10 / 10 points)
 
-- Configure the top-level `parserOptions` property like this:
+- [x] **Prettier Setup (5 points)**
+- [x] **ESLint Configuration (5 points)**
 
-```js
-export default {
-	// other rules...
-	parserOptions: {
-		ecmaVersion: 'latest',
-		sourceType: 'module',
-		project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.app.json'],
-		tsconfigRootDir: __dirname,
-	},
-};
-```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+
+

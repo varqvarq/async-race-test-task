@@ -26,6 +26,8 @@ import generateRandomCars from '../../utils/generateCars';
 
 import style from './Garage.module.scss';
 
+const CARS_PER_PAGE = 7;
+
 const Garage = () => {
 	const dispatch = useAppDispatch();
 	const { cars, totalCount, status } = useAppSelector(selectGarageData);
@@ -58,7 +60,7 @@ const Garage = () => {
 
 			await dispatch(fetchAllCars({ page: currentPage })).unwrap();
 
-			const allPages = Math.ceil(totalCount / 7);
+			const allPages = Math.ceil(totalCount / CARS_PER_PAGE);
 
 			if (currentPage > allPages && allPages > 0) {
 				currentPage = allPages;
@@ -329,7 +331,10 @@ const Garage = () => {
 
 				{totalCount > 7 && (
 					<div className={style.pagination}>
-						<Pagination totalCount={totalCount} />
+						<Pagination
+							totalCount={totalCount}
+							elementsPerPage={CARS_PER_PAGE}
+						/>
 					</div>
 				)}
 			</ul>

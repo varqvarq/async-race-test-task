@@ -7,9 +7,13 @@ import style from './Pagination.module.scss';
 
 interface PaginationProps {
 	totalCount: number;
+	elementsPerPage: number;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ totalCount }) => {
+const Pagination: React.FC<PaginationProps> = ({
+	totalCount,
+	elementsPerPage,
+}) => {
 	const [params] = useSearchParams({ page: '1' });
 	const [currentPage, setCurrentPage] = useState(1);
 	const navigate = useNavigate();
@@ -17,7 +21,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalCount }) => {
 	const pageParams = params.get('page');
 	const page = pageParams ? +pageParams : 1;
 
-	const allPages = Math.ceil(totalCount / 7);
+	const allPages = Math.ceil(totalCount / elementsPerPage);
 
 	useEffect(() => {
 		if (page) {

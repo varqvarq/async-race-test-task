@@ -14,6 +14,8 @@ import {
 
 import style from './Winners.module.scss';
 
+const WINNERS_PER_PAGE = 10;
+
 const Winners: React.FC = () => {
 	const { winners, totalCount } = useAppSelector(selectWinnersData);
 	const dispatch = useAppDispatch();
@@ -31,10 +33,16 @@ const Winners: React.FC = () => {
 			let currentPage = page;
 
 			await dispatch(
-				fetchAllWinners({ page: currentPage, sort, order, limit: 10 })
+				fetchAllWinners({
+					page: currentPage,
+					sort,
+					order,
+					limit: WINNERS_PER_PAGE,
+				})
 			).unwrap();
 
-			const allPages = Math.ceil(totalCount / 7);
+			const allPages = Math.ceil(totalCount / WINNERS_PER_PAGE);
+			console.log(allPages);
 
 			if (currentPage > allPages && allPages > 0) {
 				currentPage = allPages;
@@ -133,7 +141,10 @@ const Winners: React.FC = () => {
 				</tbody>
 			</table>
 			<div className={style.pagination}>
-				<Pagination totalCount={totalCount} />
+				<Pagination
+					totalCount={totalCount}
+					elementsPerPage={WINNERS_PER_PAGE}
+				/>
 			</div>
 		</div>
 	);

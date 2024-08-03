@@ -1,10 +1,17 @@
-import { ICar, IWinner, QueryParams, ResponseData } from '../types';
+import {
+	CarEngineInfo,
+	ICar,
+	IWinner,
+	QueryParams,
+	ResponseData,
+} from '../types';
 
+import { ActionStatus, Endpoints, FetchMethods, HEADER } from '../constants';
 import request, { BASE_URL } from './request';
 
 const createApiMethods = <T>(endpoint: string) => ({
 	async getAll(params?: QueryParams): Promise<ResponseData<T[]>> {
-		const defaultParams = { page: 1, limit: 7, ...params };
+		const defaultParams: QueryParams = { page: 1, limit: 7, ...params };
 		return request<T[]>(endpoint, defaultParams);
 	},
 
@@ -14,10 +21,8 @@ const createApiMethods = <T>(endpoint: string) => ({
 
 	async create(item: T): Promise<ResponseData<T>> {
 		const options: RequestInit = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
+			method: FetchMethods.POST,
+			headers: HEADER,
 			body: JSON.stringify(item),
 		};
 
@@ -26,10 +31,8 @@ const createApiMethods = <T>(endpoint: string) => ({
 
 	async update(id: number, item: T): Promise<ResponseData<T>> {
 		const options: RequestInit = {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
+			method: FetchMethods.PUT,
+			headers: HEADER,
 			body: JSON.stringify(item),
 		};
 
@@ -37,57 +40,52 @@ const createApiMethods = <T>(endpoint: string) => ({
 	},
 
 	async delete(id: number): Promise<void> {
-		await request<void>(`${endpoint}/${id}`, undefined, { method: 'DELETE' });
+		await request<void>(`${endpoint}/${id}`, undefined, {
+			method: FetchMethods.DELETE,
+		});
 	},
 });
 
-const api = {
-	garage: createApiMethods<ICar>('/garage'),
-	winners: createApiMethods<IWinner>('/winners'),
-};
-
-export default api;
-
 export const toggleEngine = async (
 	id: number,
-	status: 'started' | 'stopped'
+	status: ActionStatus.STARTED | ActionStatus.STOPPED
 ) => {
-	const options = {
-		method: 'PATCH',
+	const params: QueryParams = {
+		id,
+		status,
 	};
 
-	const url = new URL(`${BASE_URL}/engine`);
-	url.searchParams.append(`id`, id.toString());
-	url.searchParams.append(`status`, status.toString());
+	const options: RequestInit = {
+		method: FetchMethods.PATCH,
+	};
+
+	return request<CarEngineInfo>(Endpoints.ENGINE, params, options);
+};
+
+export const drive = async (id: number) => {
+	const url = new URL(BASE_URL + Endpoints.ENGINE);
+
+	url.searchParams.append('id', id.toString());
+	url.searchParams.append('status', ActionStatus.DRIVE);
+
+	const options: RequestInit = {
+		method: FetchMethods.PATCH,
+	};
 
 	const response = await fetch(url, options);
 
 	if (!response.ok) {
-		throw new Error(`Engine error ${response.statusText}`);
+		if (response.status === 500) {
+			throw new Error('engine break');
+		} else {
+			throw new Error(response.statusText);
+		}
 	}
-
-	const data = await response.json();
-	return data;
 };
 
-export const drive = async (id: number) => {
-	const options: RequestInit = {
-		method: 'PATCH',
-	};
-
-	const url = new URL(`${BASE_URL}/engine`);
-	url.searchParams.append(`id`, id.toString());
-	url.searchParams.append(`status`, 'drive');
-
-	const response = await fetch(url, options);
-	const exception = new Error();
-	exception.name = 'CustomError';
-	exception.message = '500';
-
-	if (!response.ok && response.status === 500) {
-		throw exception;
-	}
-
-	const data = await response.json();
-	return data;
+const api = {
+	garage: createApiMethods<ICar>(Endpoints.GARAGE),
+	winners: createApiMethods<IWinner>(Endpoints.WINNERS),
 };
+
+export default api;

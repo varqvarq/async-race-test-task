@@ -99,10 +99,7 @@ const garageSlice = createSlice({
 			.addCase(fetchAllCars.fulfilled, (state, action) => {
 				state.status = 'succeeded';
 				state.cars = action.payload.data;
-
-				if (action.payload.totalCount) {
-					state.totalCount = action.payload.totalCount;
-				}
+				state.totalCount = action.payload.totalCount;
 			})
 			.addCase(fetchAllCars.rejected, (state, action) => {
 				state.status = 'failed';

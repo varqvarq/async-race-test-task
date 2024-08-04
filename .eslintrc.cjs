@@ -29,6 +29,7 @@ module.exports = {
 		'prettier/prettier': 'error',
 		'react/prop-types': 'off',
 		'react/button-has-type': 'off',
+		'no-console': 'off',
 		'react/function-component-definition': [
 			2,
 			{

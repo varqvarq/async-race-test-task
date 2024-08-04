@@ -62,7 +62,7 @@ const Garage = () => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			let currentPage = page;
+			const currentPage = page;
 
 			const response = await dispatch(
 				fetchAllCars({ page: currentPage })
@@ -70,11 +70,9 @@ const Garage = () => {
 
 			const allPages = Math.ceil(response.totalCount / CARS_PER_PAGE);
 
-			if (currentPage > allPages) {
-				currentPage = allPages;
+			if (currentPage > allPages && allPages > 0) {
+				setSearchParams({ page: currentPage.toString() });
 			}
-
-			setSearchParams({ page: currentPage.toString() });
 		};
 		fetchData();
 
@@ -127,10 +125,9 @@ const Garage = () => {
 			1000
 		).toFixed(2);
 
-		const raceLenght = currentCar.parentElement.clientWidth;
-		const carLenght = currentCar.clientWidth;
-
-		const finish = Math.round(raceLenght - carLenght);
+		const finish = Math.round(
+			currentCar.parentElement.clientWidth - currentCar.clientWidth
+		);
 
 		try {
 			if (raceStartedRef.current || singleRaceStartedRef.current) {
@@ -139,7 +136,6 @@ const Garage = () => {
 			}
 
 			await drive(id);
-
 			const carPosition = Math.round(getCarPositon(currentCar));
 
 			if (
@@ -155,6 +151,7 @@ const Garage = () => {
 		} catch (e) {
 			const computedStyles = getComputedStyle(currentCar);
 			const carPosition = getCarPositon(currentCar);
+
 			if (e instanceof Error && e.message === 'engine break') {
 				if (
 					!winCheckRef.current &&
@@ -240,20 +237,23 @@ const Garage = () => {
 	};
 
 	const handleCarDelete = async (id: number) => {
-		await dispatch(deleteCar(id));
-		await dispatch(deleteWinner(id));
+		try {
+			await dispatch(deleteCar(id));
+			await dispatch(deleteWinner(id));
 
-		const updatedTotalCount = totalCount - 1;
-		const allPages = Math.ceil(updatedTotalCount / CARS_PER_PAGE);
-		let currentPage = page;
+			const updatedTotalCount = totalCount - 1;
+			const allPages = Math.ceil(updatedTotalCount / CARS_PER_PAGE);
+			let currentPage = page;
 
-		if (currentPage > allPages && allPages > 0) {
-			currentPage = allPages;
+			if (currentPage > allPages && allPages > 0) {
+				currentPage = allPages;
+			}
+
+			setSearchParams({ page: currentPage.toString() });
+			await dispatch(fetchAllCars({ page: currentPage }));
+		} catch (error) {
+			console.error('Failed to delete car:', error);
 		}
-
-		setSearchParams({ page: currentPage.toString() });
-
-		await dispatch(fetchAllCars({ page: currentPage }));
 	};
 
 	return (
@@ -346,9 +346,6 @@ const Garage = () => {
 
 							<div className={style.raceTrackContainer}>
 								<div className={style.raceTrack}>
-									<h3 style={{ position: 'absolute', right: '100px' }}>
-										{car.id}
-									</h3>
 									{status !== 'loading' && (
 										<p className={style.carName}>{car.name}</p>
 									)}

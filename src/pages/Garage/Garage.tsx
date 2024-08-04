@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import { IWinner, RaceWinner } from '../../types';
 
@@ -9,8 +8,8 @@ import CarIcon from '../../components/CarIcon/CarIcon';
 import Pagination from '../../components/Pagination/Pagination';
 import WinnerBanner from '../../components/WinnerBanner/WinnerBanner';
 import Button from '../../components/common/Button/Button';
-import { ActionStatus, CARS_PER_PAGE, DEFAULT_PAGE } from '../../constants';
-import { useAppDispatch, useAppSelector } from '../../hooks';
+import { ActionStatus, CARS_PER_PAGE } from '../../constants';
+import { useAppDispatch, useAppSelector, usePageQuery } from '../../hooks';
 import {
 	createCar,
 	deleteCar,
@@ -33,9 +32,7 @@ const Garage = () => {
 	const { garage, status } = useAppSelector(selectGarageData);
 	const { data: cars, totalCount } = garage;
 
-	const [searchParams, setSearchParams] = useSearchParams({
-		page: DEFAULT_PAGE.toString(),
-	});
+	const [page] = usePageQuery();
 	const [winner, setWinner] = useState<RaceWinner | null>(null);
 	const [raceInProgress, setRaceInProgress] = useState<boolean>(false);
 	const [singleRaceInProgress, setSingleRaceInProgress] = useState<number[]>(
@@ -55,30 +52,14 @@ const Garage = () => {
 		carRefs.current[id] = el;
 	};
 
-	const query = searchParams.get('page');
-
-	const page =
-		query && !Number.isNaN(+query) && +query > 0 ? +query : DEFAULT_PAGE;
-
 	useEffect(() => {
 		const fetchData = async () => {
-			let currentPage = page;
-
-			const response = await dispatch(
-				fetchAllCars({ page: currentPage })
-			).unwrap();
-
-			const allPages = Math.ceil(response.totalCount / CARS_PER_PAGE);
-
-			if (currentPage > allPages && allPages > 0) {
-				currentPage = allPages;
-			}
-			setSearchParams({ page: currentPage.toString() });
+			await dispatch(fetchAllCars({ page }));
 		};
 		fetchData();
 
 		setRaceInProgress(false);
-	}, [dispatch, page, setSearchParams]);
+	}, [dispatch, page, totalCount]);
 
 	const handleEngine =
 		(engineStatus: ActionStatus.STARTED | ActionStatus.STOPPED) =>
@@ -241,17 +222,6 @@ const Garage = () => {
 		try {
 			await dispatch(deleteCar(id));
 			await dispatch(deleteWinner(id));
-
-			const updatedTotalCount = totalCount - 1;
-			const allPages = Math.ceil(updatedTotalCount / CARS_PER_PAGE);
-			let currentPage = page;
-
-			if (currentPage > allPages && allPages > 0) {
-				currentPage = allPages;
-			}
-
-			setSearchParams({ page: currentPage.toString() });
-			await dispatch(fetchAllCars({ page: currentPage }));
 		} catch (error) {
 			console.error('Failed to delete car:', error);
 		}

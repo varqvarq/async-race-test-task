@@ -3,17 +3,25 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin: 20px;
+	margin: 20px 0;
+	gap: 5px;
+
+	.prevButton {
+		margin-left: 20px;
+	}
+
+	.nextButton {
+		margin-right: 20px;
+	}
 
 	.link {
-		width: fit-content;
-		max-height: 5px;
+		width: 20px;
+		height: 20px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		padding: 15px 15px;
-		margin-right: 5px;
+		padding: 17px;
 		border-radius: 5px;
 		font-size: 12px;
 

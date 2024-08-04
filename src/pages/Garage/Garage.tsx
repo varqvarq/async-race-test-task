@@ -62,7 +62,7 @@ const Garage = () => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const currentPage = page;
+			let currentPage = page;
 
 			const response = await dispatch(
 				fetchAllCars({ page: currentPage })
@@ -71,8 +71,9 @@ const Garage = () => {
 			const allPages = Math.ceil(response.totalCount / CARS_PER_PAGE);
 
 			if (currentPage > allPages && allPages > 0) {
-				setSearchParams({ page: currentPage.toString() });
+				currentPage = allPages;
 			}
+			setSearchParams({ page: currentPage.toString() });
 		};
 		fetchData();
 

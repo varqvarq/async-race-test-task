@@ -15,12 +15,15 @@ const Pagination: React.FC<PaginationProps> = ({
 	totalCount,
 	elementsPerPage,
 }) => {
-	const [params] = useSearchParams({ page: DEFAULT_PAGE.toString() });
 	const [currentPage, setCurrentPage] = useState(DEFAULT_PAGE);
 	const navigate = useNavigate();
 
-	const pageParams = params.get('page');
-	const page = pageParams ? +pageParams : DEFAULT_PAGE;
+	const [params] = useSearchParams({ page: DEFAULT_PAGE.toString() });
+
+	const query = params.get('page');
+
+	const page =
+		query && !Number.isNaN(+query) && +query > 0 ? +query : DEFAULT_PAGE;
 
 	const allPages = Math.ceil(totalCount / elementsPerPage);
 

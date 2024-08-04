@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import { ICar, QueryParams } from '../../types';
 
 import CarIcon from '../../components/CarIcon/CarIcon';
 import Pagination from '../../components/Pagination/Pagination';
-import { DEFAULT_PAGE, WINNERS_PER_PAGE } from '../../constants';
-import { useAppDispatch, useAppSelector } from '../../hooks';
+import { WINNERS_PER_PAGE } from '../../constants';
+import { useAppDispatch, useAppSelector, usePageQuery } from '../../hooks';
 import { getCarById } from '../../redux/garage/garageSlice';
 import {
 	fetchAllWinners,
@@ -24,14 +23,7 @@ const Winners: React.FC = () => {
 	const [winnerDetails, setWinnerDetails] = useState<Record<number, ICar>>({});
 	const [sort, setSort] = useState<QueryParams['sort']>();
 	const [order, setOrder] = useState<QueryParams['order']>();
-
-	const [searchParams, setSearchParams] = useSearchParams({
-		page: DEFAULT_PAGE.toString(),
-	});
-
-	const query = searchParams.get('page');
-	const page =
-		query && !Number.isNaN(+query) && +query > 0 ? +query : DEFAULT_PAGE;
+	const [page] = usePageQuery();
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -42,19 +34,11 @@ const Winners: React.FC = () => {
 					order,
 					limit: WINNERS_PER_PAGE,
 				})
-			).unwrap();
-
-			const allPages = Math.ceil(totalCount / WINNERS_PER_PAGE);
-
-			if (page > allPages && allPages > 0) {
-				setSearchParams({ page: allPages.toString() });
-			}
+			);
 		};
 
-		if (!totalCount) {
-			fetchData();
-		}
-	}, [dispatch, sort, order, totalCount, page, setSearchParams]);
+		fetchData();
+	}, [dispatch, order, page, sort, totalCount]);
 
 	useEffect(() => {
 		const fetchWinnerDetails = async () => {

@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import clsx from 'clsx';
+
 import { DEFAULT_PAGE } from '../../constants';
 import { usePageQuery } from '../../hooks';
 import Button from '../common/Button/Button';
@@ -17,9 +19,7 @@ const Pagination: React.FC<PaginationProps> = ({
 	elementsPerPage,
 }) => {
 	const navigate = useNavigate();
-
 	const [page, setPage] = usePageQuery();
-
 	const allPages = Math.ceil(totalCount / elementsPerPage);
 
 	const prevPage = Math.max(2, Math.min(page - 1, allPages - 3));
@@ -45,6 +45,19 @@ const Pagination: React.FC<PaginationProps> = ({
 		navigateToPage(page + 1);
 	};
 
+	const buttonClasses = {
+		defaultPage: clsx(style.link, { [style.active]: page === DEFAULT_PAGE }),
+		prevPage: clsx(style.link, {
+			[style.active]: page === prevPage,
+			[style.prevButton]: allPages >= 5,
+		}),
+		middlePage: clsx(style.link, { [style.active]: page === middlePage }),
+		nextPage: clsx(style.link, style.nextButton, {
+			[style.active]: page === nextPage,
+		}),
+		allPages: clsx(style.link, { [style.active]: page === allPages }),
+	};
+
 	return (
 		<div className={style.list}>
 			<Button
@@ -55,21 +68,21 @@ const Pagination: React.FC<PaginationProps> = ({
 			/>
 			<Button
 				text={DEFAULT_PAGE.toString()}
-				className={`${style.link} ${page === DEFAULT_PAGE ? style.active : ''}`}
+				className={buttonClasses.defaultPage}
 				onClick={() => navigateToPage(DEFAULT_PAGE)}
 			/>
 
 			{allPages >= 3 && (
 				<Button
 					text={prevPage}
-					className={`${style.link} ${prevPage === page ? style.active : ''}`}
+					className={buttonClasses.prevPage}
 					onClick={() => navigateToPage(prevPage)}
 				/>
 			)}
 			{allPages >= 4 && (
 				<Button
 					text={middlePage}
-					className={`${style.link} ${page === middlePage ? style.active : ''}`}
+					className={buttonClasses.middlePage}
 					onClick={() => navigateToPage(middlePage)}
 				/>
 			)}
@@ -77,7 +90,7 @@ const Pagination: React.FC<PaginationProps> = ({
 			{allPages >= 5 && (
 				<Button
 					text={nextPage}
-					className={`${style.link} ${page === nextPage ? style.active : ''}`}
+					className={buttonClasses.nextPage}
 					onClick={() => navigateToPage(nextPage)}
 				/>
 			)}
@@ -85,10 +98,11 @@ const Pagination: React.FC<PaginationProps> = ({
 			{allPages > DEFAULT_PAGE && (
 				<Button
 					text={allPages.toString()}
-					className={`${style.link} ${page === allPages ? style.active : ''}`}
+					className={buttonClasses.allPages}
 					onClick={() => navigateToPage(allPages)}
 				/>
 			)}
+
 			<Button
 				text='&rarr;'
 				className={style.link}
